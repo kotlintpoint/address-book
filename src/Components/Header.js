@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useGlobalContext } from "./WrapContext";
 import { useMutation } from "@apollo/client";
 import { LOGOUT } from "../Queries";
+import { deleteAuthToken } from "../token";
 
 function Header() {
   const { token, logout } = useGlobalContext();
@@ -23,6 +24,7 @@ function Header() {
         <Link
           onClick={() => {
             //revokeCustomerToken();
+            deleteAuthToken();
             logout();
           }}
           to="/"
