@@ -1,4 +1,6 @@
-export * from "./Home";
-export * from "./Login";
-export * from "./AddressBook";
-export * from "./NewAddress";
+import Home from "./Home";
+import Login from "./Login";
+import AddressBook from "./AddressBook";
+import NewAddress from "./NewAddress";
+
+export { Home, Login, AddressBook, NewAddress };

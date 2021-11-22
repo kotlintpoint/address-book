@@ -1,12 +1,8 @@
 import logo from "./logo.svg";
 import "./App.css";
-import { Header, Footer, WrapContext } from "./Components";
+import { Header, Footer, WrapContext, PrivateRoute } from "./Components";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import AddressBook from "./Screens/AddressBook";
-import Login from "./Screens/Login";
-import NewAddress from "./Screens/NewAddress";
-import Home from "./Screens/Home";
-import PrivateRoute from "./Components/PrivateRoute";
+import { Home, AddressBook, Login, NewAddress } from "./Screens";
 
 function App() {
   return (

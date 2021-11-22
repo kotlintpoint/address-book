@@ -14,13 +14,19 @@ function Header() {
   const [revokeCustomerToken, { error, loading, data }] = useMutation(LOGOUT);
   console.log(data);
 
+  const signInLink = token ? (
+    <a onClick={(e) => e.preventDefault()}>Welcome Jack Sparrow</a>
+  ) : (
+    <Link to="/login">Sign in</Link>
+  );
+
   return (
     <div className="header">
       <a href="#default" className="logo">
         CompanyLogo
       </a>
       <div className="header-right">
-        <Link to="/login">{token ? "Welcome Jack Sparrow" : "Sign in"}</Link>
+        {signInLink}
         <Link
           onClick={() => {
             //revokeCustomerToken();
