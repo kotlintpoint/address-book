@@ -11,6 +11,11 @@ const WrapReducer = (state, action) => {
         token: "",
       };
     }
+    case "SET_NAME":
+      return {
+        ...state,
+        customerName: action.customerName,
+      };
   }
   return state;
 };

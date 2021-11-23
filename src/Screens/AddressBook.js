@@ -4,6 +4,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import { DELETE_ADDRESS, GET_ALL_ADDRESS } from "../Queries";
 import GridComponent from "../Components/GridComponent";
 import { useHistory } from "react-router-dom";
+import { useGlobalContext } from "../Components/WrapContext";
 
 function AddressBook() {
   const [customerData, setCustomerData] = useState(null);
@@ -12,9 +13,18 @@ function AddressBook() {
   });
   const [deleteCustomerAddress, deleteData] = useMutation(DELETE_ADDRESS);
 
+  const { setCustomerName } = useGlobalContext();
+
   //console.log(data && data.customer);
   //console.log(error);
   console.log(customerData);
+
+  useEffect(() => {
+    if (customerData) {
+      const { firstname, lastname } = customerData.customer;
+      setCustomerName(`${firstname} ${lastname}`);
+    }
+  }, [customerData]);
 
   const history = useHistory();
   const editHandler = (customer, theAddress) => {

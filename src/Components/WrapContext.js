@@ -5,6 +5,7 @@ const AppContext = React.createContext();
 
 const initialState = {
   token: "",
+  customerName: "",
 };
 
 export const WrapContext = ({ children }) => {
@@ -14,12 +15,18 @@ export const WrapContext = ({ children }) => {
     dispatch({ type: "LOGIN", token });
   };
 
+  const setCustomerName = (customerName) => {
+    dispatch({ type: "SET_NAME", customerName });
+  };
+
   const logout = () => {
     dispatch({ type: "LOGOUT" });
   };
 
   return (
-    <AppContext.Provider value={{ ...state, setToken, logout }}>
+    <AppContext.Provider
+      value={{ ...state, setToken, setCustomerName, logout }}
+    >
       {" "}
       {children}{" "}
     </AppContext.Provider>

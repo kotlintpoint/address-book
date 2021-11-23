@@ -28,6 +28,7 @@ function Login() {
 
   useEffect(() => {
     const token = getAuthToken();
+    console.log(token);
     if (token) {
       setToken(token);
       history.push("/address-book");

@@ -6,16 +6,16 @@ import { LOGOUT } from "../Queries";
 import { deleteAuthToken } from "../token";
 
 function Header() {
-  const { token, logout } = useGlobalContext();
+  const { token, logout, customerName } = useGlobalContext();
   //console.log("Header", value);
   //const token = "";
 
   //const [generateCustomerToken, { error, loading, data }] = useMutation(LOGIN);
   const [revokeCustomerToken, { error, loading, data }] = useMutation(LOGOUT);
-  console.log(data);
+  //console.log(data);
 
   const signInLink = token ? (
-    <a onClick={(e) => e.preventDefault()}>Welcome Jack Sparrow</a>
+    <a onClick={(e) => e.preventDefault()}>Welcome {customerName}</a>
   ) : (
     <Link to="/login">Sign in</Link>
   );
