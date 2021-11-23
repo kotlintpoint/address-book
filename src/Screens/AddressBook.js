@@ -49,6 +49,17 @@ function AddressBook() {
     }
   }, [loading, data]);
 
+  useEffect(() => {
+    if (error) {
+      console.log(JSON.stringify(error));
+      setErrorMessage(error.message);
+      setTimeout(() => {
+        history.push("/login");
+        setErrorMessage("");
+      }, 2000);
+    }
+  }, [error]);
+
   if (
     error &&
     error.graphQLErrors.length > 0 &&

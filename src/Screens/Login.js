@@ -13,6 +13,7 @@ function Login() {
     roni_cost3@example.com
     */
 
+  const [errorMessage, setErrorMessage] = useState("");
   const [generateCustomerToken, { error, loading }] = useMutation(LOGIN);
 
   //   if (loading) return 'Submitting...';
@@ -59,8 +60,9 @@ function Login() {
       setAuthToken(result.data.generateCustomerToken.token);
       history.push("/address-book");
     } catch (error) {
-      console.log(error);
-      alert(error);
+      console.log(JSON.stringify(error));
+      setErrorMessage(error.message);
+      setTimeout(() => setErrorMessage(""), 2000);
     }
   };
 
@@ -72,6 +74,11 @@ function Login() {
 
   return (
     <>
+      {errorMessage && (
+        <div id="error-snackbar" className="show">
+          {errorMessage}
+        </div>
+      )}
       <h3 style={{ textAlign: "center" }}>Customer Login Page</h3>
       <div className="login-container">
         {loading && <div className="loader"></div>}
