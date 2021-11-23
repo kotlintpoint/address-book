@@ -85,10 +85,20 @@ function AddressBook() {
 
   const searchHandler = (e) => {
     let value = e.target.value.toLowerCase();
+    //if (!value) value = e.target.value;
     //let tempCustomerData = { ...customerData };
-    let tempAddresses = customerData.addresses.filter((tempAddress) =>
-      tempAddress.street[0].toLowerCase().includes(value)
-    );
+    let tempAddresses = customerData.addresses.filter((tempAddress) => {
+      console.log(tempAddress);
+      return (
+        (tempAddress.street[0] &&
+          tempAddress.street[0].toLowerCase().includes(value)) ||
+        (tempAddress.street[1] &&
+          tempAddress.street[1].toLowerCase().includes(value)) ||
+        (tempAddress.city && tempAddress.city.includes(value)) ||
+        (tempAddress.state && tempAddress.state.includes(value)) ||
+        (tempAddress.telephone && tempAddress.telephone.includes(value))
+      );
+    });
     //console.log(tempAddresses);
     setFilterData({
       ...customerData,
