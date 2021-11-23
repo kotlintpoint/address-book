@@ -5,7 +5,7 @@ import { useGlobalContext } from "../Components/WrapContext";
 
 import { LOGIN } from "../Queries";
 import { useHistory } from "react-router-dom";
-import { setAuthToken } from "../token";
+import { getAuthToken, setAuthToken } from "../token";
 
 function Login() {
   /*
@@ -27,7 +27,11 @@ function Login() {
   const { setToken } = useGlobalContext();
 
   useEffect(() => {
-    //setToken(sessionStorage.getItem("token"));
+    const token = getAuthToken();
+    if (token) {
+      setToken(token);
+      history.push("/address-book");
+    }
   }, []);
 
   const history = useHistory();
@@ -48,8 +52,8 @@ function Login() {
     try {
       const result = await generateCustomerToken({ variables: user });
       console.log(result);
-      setToken(data.generateCustomerToken.token);
-      setAuthToken(data.generateCustomerToken.token);
+      setToken(result.data.generateCustomerToken.token);
+      setAuthToken(result.data.generateCustomerToken.token);
       history.push("/address-book");
     } catch (error) {
       console.log(error);
