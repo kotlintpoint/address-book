@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery } from "@apollo/client";
 import { DELETE_ADDRESS, GET_ALL_ADDRESS } from "../Queries";
@@ -8,11 +8,10 @@ import { useGlobalContext } from "../Components/WrapContext";
 import { deleteAuthToken } from "../token";
 
 function AddressBook() {
+  const [message, setMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [customerData, setCustomerData] = useState(null);
   const [filterData, setFilterData] = useState(null);
-  // const { data, loading, error } = useQuery(GET_ALL_ADDRESS, {
-  //   onCompleted: setCustomerData,
-  // });
   const { data, loading, error } = useQuery(GET_ALL_ADDRESS);
   const [deleteCustomerAddress, deleteData] = useMutation(DELETE_ADDRESS);
   const history = useHistory();
@@ -39,9 +38,7 @@ function AddressBook() {
   if (
     error &&
     error.graphQLErrors.length > 0 &&
-    error.graphQLErrors[0].message.includes(
-      "The current customer isn't authorized"
-    )
+    error.graphQLErrors[0].message.includes("customer isn't authorized")
   ) {
     //console.log(JSON.stringify(error));
     deleteAuthToken();
@@ -68,15 +65,20 @@ function AddressBook() {
         });
 
         console.log(result);
-        alert("Deleted Successfully!!!");
+        //alert("Deleted Successfully!!!");
+        setMessage("Deleted Successfully!!!");
+        setTimeout(() => setMessage(""), 2000);
+
         const tempAddresses = customerData.addresses.filter(
           (tempAddress) => tempAddress.id !== theAddress.id
         );
         setCustomerData({ ...customerData, addresses: tempAddresses });
         setFilterData({ ...customerData, addresses: tempAddresses });
       } catch (error) {
-        console.log(error);
-        alert(error);
+        console.log(JSON.stringify(error));
+        //alert(error);
+        setErrorMessage(error.graphQLErrors[0].message);
+        setTimeout(() => setErrorMessage(""), 2000);
       }
     }
   };
@@ -96,8 +98,19 @@ function AddressBook() {
 
   return (
     <>
+      {message && (
+        <div id="snackbar" className="show">
+          {message}
+        </div>
+      )}
+      {errorMessage && (
+        <div id="error-snackbar" className="show">
+          {errorMessage}
+        </div>
+      )}
       <div className="address-book-container">
         <h3 style={{ textAlign: "center" }}>Address book</h3>
+
         <div className="center">
           <input
             type="text"

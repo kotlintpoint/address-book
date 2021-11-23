@@ -4,7 +4,8 @@ import { ADD_NEW_ADDRESS, UPDATE_ADDRESS } from "../Queries";
 import { useHistory, useLocation } from "react-router-dom";
 
 function NewAddress() {
-  let street = [];
+  const [errorMessage, setErrorMessage] = useState("");
+  const [message, setMessage] = useState("");
   const [address, setAddress] = useState({
     id: undefined,
     firstname: "",
@@ -66,6 +67,14 @@ function NewAddress() {
     }
   };
 
+  const showMessageAndRedirect = (msg) => {
+    setMessage(msg);
+    setTimeout(() => {
+      setMessage("");
+      history.push("/address-book");
+    }, 2000);
+  };
+
   const submitHandler = async (e) => {
     e.preventDefault();
     console.log(address);
@@ -75,22 +84,25 @@ function NewAddress() {
       try {
         const result = await updateCustomerAddress({ variables: address });
         console.log(result);
-        alert("Address Updated Success!!!");
-        history.push("/address-book");
+        //alert("Address Updated Success!!!");
+        showMessageAndRedirect("Address Updated Success!!!");
       } catch (error) {
-        console.log(error);
+        console.log(JSON.stringify(error));
+        setErrorMessage(error.graphQLErrors[0].message);
+        setTimeout(() => setErrorMessage(""), 2000);
       }
     } else {
       // insert
       createCustomerAddress({ variables: address })
         .then((result) => {
           console.log(result);
-          alert("Address Inserted Success!!!");
-          history.push("/address-book");
+          //alert("Address Inserted Success!!!");
+          showMessageAndRedirect("Address Inserted Success!!!");
         })
         .catch((error) => {
-          console.log(error);
-          alert(error);
+          console.log(JSON.stringify(error));
+          setErrorMessage(error.graphQLErrors[0].message);
+          setTimeout(() => setErrorMessage(""), 2000);
         });
     }
   };
@@ -100,9 +112,19 @@ function NewAddress() {
 
   return (
     <>
+      {message && (
+        <div id="snackbar" className="show">
+          {message}
+        </div>
+      )}
+      {errorMessage && (
+        <div id="error-snackbar" className="show">
+          {errorMessage}
+        </div>
+      )}
       <div className="address-form-container">
         <h3 style={{ textAlign: "center" }}>Add / Edit Address</h3>
-        {loading && <div className="loader"></div>}
+        {(loading || update.loading) && <div className="loader"></div>}
         <form onSubmit={submitHandler}>
           <div className="container">
             <label>Address ID : #{address.id}</label>
