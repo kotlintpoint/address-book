@@ -67,11 +67,13 @@ function NewAddress() {
     }
   };
 
-  const showMessageAndRedirect = (msg) => {
+  const showMessageAndRedirect = (msg, newAddress) => {
     setMessage(msg);
     setTimeout(() => {
       setMessage("");
-      history.push("/address-book");
+      history.push("/address-book", {
+        newAddress,
+      });
     }, 2000);
   };
 
@@ -95,9 +97,11 @@ function NewAddress() {
       // insert
       createCustomerAddress({ variables: address })
         .then((result) => {
-          console.log(result);
+          console.log(JSON.stringify(result));
           //alert("Address Inserted Success!!!");
-          showMessageAndRedirect("Address Inserted Success!!!");
+          const newAddress = result.data.createCustomerAddress;
+          console.log(newAddress);
+          showMessageAndRedirect("Address Inserted Success!!!", newAddress);
         })
         .catch((error) => {
           console.log(JSON.stringify(error));

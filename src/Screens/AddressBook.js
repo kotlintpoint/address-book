@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useMutation, useQuery } from "@apollo/client";
 import { DELETE_ADDRESS, GET_ALL_ADDRESS } from "../Queries";
 import GridComponent from "../Components/GridComponent";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { useGlobalContext } from "../Components/WrapContext";
 import { deleteAuthToken } from "../token";
 
@@ -12,14 +12,28 @@ function AddressBook() {
   const [errorMessage, setErrorMessage] = useState("");
   const [customerData, setCustomerData] = useState(null);
   const [filterData, setFilterData] = useState(null);
-  const { data, loading, error } = useQuery(GET_ALL_ADDRESS);
+  const { data, loading, error, refetch } = useQuery(GET_ALL_ADDRESS);
   const [deleteCustomerAddress, deleteData] = useMutation(DELETE_ADDRESS);
   const history = useHistory();
+  const location = useLocation();
   const { logout, setCustomerName } = useGlobalContext();
 
   //console.log(data && data.customer);
   console.log(error);
   console.log(customerData);
+
+  useEffect(() => {
+    console.log(location);
+    if (location.state) {
+      refetch();
+      /*const tempAddresses = [
+        ...customerData.addresses,
+        location.state.newAddress,
+      ];
+      setCustomerData({ ...customerData, addresses: tempAddresses });
+      setFilterData({ ...customerData, addresses: tempAddresses });*/
+    }
+  }, []);
 
   useEffect(() => {
     if (customerData) {
