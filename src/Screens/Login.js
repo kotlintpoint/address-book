@@ -13,7 +13,7 @@ function Login() {
     roni_cost3@example.com
     */
 
-  const [generateCustomerToken, { error, loading, data }] = useMutation(LOGIN);
+  const [generateCustomerToken, { error, loading }] = useMutation(LOGIN);
 
   //   if (loading) return 'Submitting...';
   //   if (error) return `Submission error! ${error.message}`;
@@ -53,7 +53,9 @@ function Login() {
     try {
       const result = await generateCustomerToken({ variables: user });
       console.log(result);
+      // Save to Context
       setToken(result.data.generateCustomerToken.token);
+      // Save to Local Storage
       setAuthToken(result.data.generateCustomerToken.token);
       history.push("/address-book");
     } catch (error) {

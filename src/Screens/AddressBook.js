@@ -36,21 +36,26 @@ function AddressBook() {
   };
   const deleteHandler = (theAddress) => {
     console.log(theAddress.id);
-    deleteCustomerAddress({ variables: { idd: theAddress.id } })
-      .then((result) => {
-        console.log(result);
-        alert("Deleted Successfully!!!");
-        const tempAddress = customerData.customer.addresses.filter(
-          (tempAddress) => tempAddress.id !== theAddress.id
-        );
-        setCustomerData({ ...customerData, addresses: tempAddress });
-        //history.replace("/address-book");
-        //window.location.reload(false);
-      })
-      .catch((error) => {
-        console.log(error);
-        alert(error);
-      });
+
+    if (
+      window.confirm(`Sure want to Delete Address with id ${theAddress.id} ?`)
+    ) {
+      deleteCustomerAddress({ variables: { idd: theAddress.id } })
+        .then((result) => {
+          console.log(result);
+          alert("Deleted Successfully!!!");
+          const tempAddress = customerData.customer.addresses.filter(
+            (tempAddress) => tempAddress.id !== theAddress.id
+          );
+          setCustomerData({ ...customerData, addresses: tempAddress });
+          //history.replace("/address-book");
+          //window.location.reload(false);
+        })
+        .catch((error) => {
+          console.log(error);
+          alert(error);
+        });
+    }
   };
 
   const searchHandler = (e) => {
