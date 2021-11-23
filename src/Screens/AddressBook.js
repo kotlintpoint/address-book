@@ -9,23 +9,33 @@ import { deleteAuthToken } from "../token";
 
 function AddressBook() {
   const [customerData, setCustomerData] = useState(null);
-  const { loading, error } = useQuery(GET_ALL_ADDRESS, {
-    onCompleted: setCustomerData,
-  });
+  const [filterData, setFilterData] = useState(null);
+  // const { data, loading, error } = useQuery(GET_ALL_ADDRESS, {
+  //   onCompleted: setCustomerData,
+  // });
+  const { data, loading, error } = useQuery(GET_ALL_ADDRESS);
   const [deleteCustomerAddress, deleteData] = useMutation(DELETE_ADDRESS);
   const history = useHistory();
-  const { setCustomerName } = useGlobalContext();
+  const { logout, setCustomerName } = useGlobalContext();
 
   //console.log(data && data.customer);
   console.log(error);
-  //console.log(customerData);
+  console.log(customerData);
 
   useEffect(() => {
     if (customerData) {
-      const { firstname, lastname } = customerData.customer;
+      const { firstname, lastname } = customerData;
       setCustomerName(`${firstname} ${lastname}`);
     }
   }, [customerData]);
+
+  useEffect(() => {
+    if (!loading && data) {
+      setCustomerData(data.customer);
+      setFilterData(data.customer);
+    }
+  }, [loading, data]);
+
   if (
     error &&
     error.graphQLErrors.length > 0 &&
@@ -35,6 +45,7 @@ function AddressBook() {
   ) {
     //console.log(JSON.stringify(error));
     deleteAuthToken();
+    logout();
     history.push("/login");
   }
 
@@ -45,41 +56,42 @@ function AddressBook() {
       ...theAddress,
     });
   };
-  const deleteHandler = (theAddress) => {
+  const deleteHandler = async (theAddress) => {
     console.log(theAddress.id);
 
     if (
       window.confirm(`Sure want to Delete Address with id ${theAddress.id} ?`)
     ) {
-      deleteCustomerAddress({ variables: { idd: theAddress.id } })
-        .then((result) => {
-          console.log(result);
-          alert("Deleted Successfully!!!");
-          const tempAddress = customerData.customer.addresses.filter(
-            (tempAddress) => tempAddress.id !== theAddress.id
-          );
-          setCustomerData({ ...customerData, addresses: tempAddress });
-          //history.replace("/address-book");
-          //window.location.reload(false);
-        })
-        .catch((error) => {
-          console.log(error);
-          alert(error);
+      try {
+        const result = await deleteCustomerAddress({
+          variables: { idd: theAddress.id },
         });
+
+        console.log(result);
+        alert("Deleted Successfully!!!");
+        const tempAddresses = customerData.addresses.filter(
+          (tempAddress) => tempAddress.id !== theAddress.id
+        );
+        setCustomerData({ ...customerData, addresses: tempAddresses });
+        setFilterData({ ...customerData, addresses: tempAddresses });
+      } catch (error) {
+        console.log(error);
+        alert(error);
+      }
     }
   };
 
   const searchHandler = (e) => {
-    /*const value = e.target.value;
-    const tempAddresses = customerData.customer.addresses.filter(
-      (tempAddress) => tempAddress.city.includes(value)
+    let value = e.target.value.toLowerCase();
+    //let tempCustomerData = { ...customerData };
+    let tempAddresses = customerData.addresses.filter((tempAddress) =>
+      tempAddress.street[0].toLowerCase().includes(value)
     );
-    console.log(tempAddresses);
-    var NewData = { ...customerData };
-    NewData.customer.addresses = [...tempAddresses];
-    setCustomerData({
-      NewData,
-    });*/
+    //console.log(tempAddresses);
+    setFilterData({
+      ...customerData,
+      addresses: tempAddresses,
+    });
   };
 
   return (
@@ -101,9 +113,9 @@ function AddressBook() {
             <div className="loader"></div>
           </div>
         )}
-        {customerData && (
+        {filterData && (
           <GridComponent
-            customer={customerData.customer}
+            customer={filterData}
             editHandler={editHandler}
             deleteHandler={deleteHandler}
           ></GridComponent>
