@@ -15,8 +15,8 @@ function GridComponent({ customer, editHandler, deleteHandler }) {
                   <p>
                     {customer.firstname} {customer.lastname}
                   </p>
-                  <p>Address line 1</p>
-                  <p>Address line 2</p>
+                  <p>{theAddress.street[0]}</p>
+                  <p>{theAddress.street[1]}</p>
                   <p>{theAddress.city}</p>
                   <p>{theAddress.state}</p>
                   <p>{theAddress.country_code}</p>

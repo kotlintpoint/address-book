@@ -25,7 +25,7 @@ function NewAddress() {
   useEffect(() => {
     console.log(location);
     if (location.state) {
-      const {
+      var {
         id,
         firstname,
         lastname,
@@ -33,6 +33,7 @@ function NewAddress() {
         country_code,
         postcode,
         telephone,
+        street,
       } = location.state;
       setAddress({
         id,
@@ -42,6 +43,7 @@ function NewAddress() {
         telephone,
         postcode,
         country_code,
+        street,
       });
     }
   }, []);
@@ -49,18 +51,13 @@ function NewAddress() {
   const changeHandler = (e) => {
     let name = e.target.name;
     let value = e.target.value;
-    if (name === "line1") {
-      street[0] = value;
-      setAddress({
-        ...address,
-        street: street,
-      });
-    } else if (name === "line2") {
-      street[1] = value;
-      setAddress({
-        ...address,
-        street: street,
-      });
+    let tempAddress = { ...address };
+    if (name === "street1") {
+      tempAddress.street = [value, tempAddress.street[1]];
+      setAddress(tempAddress);
+    } else if (name === "street2") {
+      tempAddress.street = [tempAddress.street[0], value];
+      setAddress(tempAddress);
     } else {
       setAddress({
         ...address,
@@ -74,6 +71,7 @@ function NewAddress() {
     console.log(address);
 
     if (address.id) {
+      // update
       try {
         const result = await updateCustomerAddress({ variables: address });
         console.log(result);
@@ -83,6 +81,7 @@ function NewAddress() {
         console.log(error);
       }
     } else {
+      // insert
       createCustomerAddress({ variables: address })
         .then((result) => {
           console.log(result);
@@ -131,22 +130,20 @@ function NewAddress() {
                 />
               </div>
             </div>
-            <label htmlFor="line1">Address*</label>
+            <label htmlFor="street1">Address*</label>
             <input
               type="text"
-              id="address1"
-              name="line1"
+              name="street1"
               placeholder="201, Sidhdhnath Avenue..."
               onChange={changeHandler}
-              value={address.line1}
+              value={address.street[0]}
             />
             <input
               type="text"
-              id="address2"
-              name="line2"
+              name="street2"
               placeholder="Masma, Olpad Road, ..."
               onChange={changeHandler}
-              value={address.line2}
+              value={address.street[1]}
             />
             <div className="row">
               <div className="col-50">

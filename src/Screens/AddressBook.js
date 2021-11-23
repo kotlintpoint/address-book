@@ -5,6 +5,7 @@ import { DELETE_ADDRESS, GET_ALL_ADDRESS } from "../Queries";
 import GridComponent from "../Components/GridComponent";
 import { useHistory } from "react-router-dom";
 import { useGlobalContext } from "../Components/WrapContext";
+import { deleteAuthToken } from "../token";
 
 function AddressBook() {
   const [customerData, setCustomerData] = useState(null);
@@ -12,12 +13,12 @@ function AddressBook() {
     onCompleted: setCustomerData,
   });
   const [deleteCustomerAddress, deleteData] = useMutation(DELETE_ADDRESS);
-
+  const history = useHistory();
   const { setCustomerName } = useGlobalContext();
 
   //console.log(data && data.customer);
-  //console.log(error);
-  console.log(customerData);
+  console.log(error);
+  //console.log(customerData);
 
   useEffect(() => {
     if (customerData) {
@@ -25,8 +26,18 @@ function AddressBook() {
       setCustomerName(`${firstname} ${lastname}`);
     }
   }, [customerData]);
+  if (
+    error &&
+    error.graphQLErrors.length > 0 &&
+    error.graphQLErrors[0].message.includes(
+      "The current customer isn't authorized"
+    )
+  ) {
+    //console.log(JSON.stringify(error));
+    deleteAuthToken();
+    history.push("/login");
+  }
 
-  const history = useHistory();
   const editHandler = (customer, theAddress) => {
     history.push("/new-address", {
       firstname: customer.firstname,

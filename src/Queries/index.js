@@ -32,6 +32,7 @@ export const GET_ALL_ADDRESS = gql`
         }
         postcode
         telephone
+        street
       }
     }
   }
@@ -43,12 +44,12 @@ export const ADD_NEW_ADDRESS = gql`
     $lastname: String!
     $city: String!
     $telephone: String!
+    $country_code: CountryCodeEnum
     $street: [String]
   ) {
     createCustomerAddress(
       input: {
-        region: { region_id: 7 }
-        country_code: US
+        country_code: $country_code
         street: $street
         telephone: $telephone
         postcode: "77777"
@@ -78,16 +79,31 @@ export const ADD_NEW_ADDRESS = gql`
 export const UPDATE_ADDRESS = gql`
   mutation UpdateCustomerAddress(
     $id: Int!
+    $firstname: String!
+    $lastname: String!
     $city: String!
-    $postcode: String!
+    $telephone: String!
+    $country_code: CountryCodeEnum
+    $street: [String]
   ) {
     updateCustomerAddress(
       id: $id
-      input: { city: $city, postcode: $postcode }
+      input: {
+        street: $street
+        telephone: $telephone
+        city: $city
+        firstname: $firstname
+        lastname: $lastname
+        country_code: $country_code
+      }
     ) {
       id
+      firstname
+      lastname
       city
-      postcode
+      street
+      telephone
+      country_code
     }
   }
 `;
